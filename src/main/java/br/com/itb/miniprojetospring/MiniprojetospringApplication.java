@@ -1,3 +1,4 @@
+
 package br.com.itb.miniprojetospring;
 
 import org.springframework.boot.SpringApplication;
@@ -8,7 +9,6 @@ public class MiniprojetospringApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MiniprojetospringApplication.class, args);
-		
 	}
 
 }

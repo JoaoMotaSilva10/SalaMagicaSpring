@@ -11,18 +11,18 @@ import br.com.itb.miniprojetospring.model.FuncionarioRepository;
 
 @Service
 public class FuncionarioService {
-    // Criar objeto repository
+
+    // Injeção de Dependência do repositório
     final FuncionarioRepository funcionarioRepository;
 
-    // Injeção de Dependência
-    public FuncionarioService(FuncionarioRepository _funcionarioRepository) {
-        this.funcionarioRepository = _funcionarioRepository;
+    public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+        this.funcionarioRepository = funcionarioRepository;
     }
 
     // Método INSERT INTO FUNCIONARIO
     @Transactional
-    public Funcionario save(Funcionario _funcionario) {
-        return funcionarioRepository.save(_funcionario);
+    public Funcionario save(Funcionario funcionario) {
+        return funcionarioRepository.save(funcionario);
     }
 
     // Método SELECT * FROM FUNCIONARIO
@@ -30,8 +30,9 @@ public class FuncionarioService {
         return funcionarioRepository.findAll();
     }
 
+    // Método para buscar funcionário por ID
     public Funcionario findAllById(long id) {
-        return funcionarioRepository.findById(id).orElse(null); // Use findById para retornar um Optional
+        return funcionarioRepository.findById(id).orElse(null); // Retorna um funcionário ou null
     }
 
     // Método UPDATE FUNCIONARIO
@@ -41,7 +42,7 @@ public class FuncionarioService {
 
         if (optionalFuncionario.isPresent()) {
             Funcionario existingFuncionario = optionalFuncionario.get();
-            // Atualiza os campos necessários
+            // Atualiza os campos do funcionário
             existingFuncionario.setEmail(funcionario.getEmail());
             existingFuncionario.setNome(funcionario.getNome());
             existingFuncionario.setSenha(funcionario.getSenha());
@@ -59,4 +60,16 @@ public class FuncionarioService {
         funcionarioRepository.deleteById(id);
     }
 
+    // Método para login (autenticação)
+    public Optional<Funcionario> authenticate(String email, String senha) {
+        Optional<Funcionario> funcionarioOptional = funcionarioRepository.findByEmail(email);
+        if (funcionarioOptional.isPresent()) {
+            Funcionario funcionario = funcionarioOptional.get();
+            // Verifica se a senha está correta
+            if (funcionario.getSenha().equals(senha)) {
+                return Optional.of(funcionario); // Retorna o funcionário autenticado
+            }
+        }
+        return Optional.empty(); // Retorna vazio se a autenticação falhar
+    }
 }

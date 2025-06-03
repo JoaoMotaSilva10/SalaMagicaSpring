@@ -4,20 +4,17 @@ FROM eclipse-temurin:17-jdk-jammy AS builder
 WORKDIR /app
 COPY . .
 
-# Build do projeto com Maven (ignora testes para acelerar)
-RUN ./mvnw clean package -DskipTests
+# Dá permissão de execução ao mvnw e instala dependências Maven
+RUN chmod +x mvnw && \
+    ./mvnw dependency:go-offline -B && \
+    ./mvnw clean package -DskipTests
 
 # ---- Fase Final ----
 FROM eclipse-temurin:17-jre-jammy
-
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# Variáveis para otimizar memória (crucial para o plano Free do Render)
-ENV JAVA_OPTS="-Xmx256m -Xss512k -XX:CICompilerCount=2"
-
-# Porta exposta (Render usa a variável $PORT)
+# Otimizações para o Render (plano Free)
+ENV JAVA_OPTS="-Xmx256m -Xss512k -XX:MaxRAMPercentage=75"
 EXPOSE 8080
-
-# Comando de inicialização
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

@@ -2,33 +2,32 @@ package br.com.itb.miniprojetospring.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reserva")
+@Table(name = "Reserva")
 public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    private String aluno; // nome do aluno que reservou
+    private String informacao;
 
-    private LocalDate dataReserva;
+    private LocalDateTime dataCadastro;
+
+    private LocalDateTime dataReservada;
 
     @ManyToOne
-    @JoinColumn(name = "equipamento_id")
-    private Equipamento equipamento;
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 
-    // Getters e setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @ManyToOne
+    @JoinColumn(name = "recurso_id")
+    private Recurso recurso;
 
-    public String getAluno() { return aluno; }
-    public void setAluno(String aluno) { this.aluno = aluno; }
+    private String statusReserva;
 
-    public LocalDate getDataReserva() { return dataReserva; }
-    public void setDataReserva(LocalDate dataReserva) { this.dataReserva = dataReserva; }
-
-    public Equipamento getEquipamento() { return equipamento; }
-    public void setEquipamento(Equipamento equipamento) { this.equipamento = equipamento; }
+    // Getters e Setters
 }
+

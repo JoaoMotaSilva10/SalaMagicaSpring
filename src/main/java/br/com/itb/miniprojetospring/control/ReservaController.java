@@ -1,10 +1,9 @@
 package br.com.itb.miniprojetospring.control;
 
 import br.com.itb.miniprojetospring.model.Reserva;
-import br.com.itb.miniprojetospring.model.Equipamento;
 import br.com.itb.miniprojetospring.model.ReservaRepository;
-import br.com.itb.miniprojetospring.model.EquipamentoRepository;
 
+import br.com.itb.miniprojetospring.service.ReservaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,35 +11,49 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservas")
+@CrossOrigin(origins = "*")
+@RequestMapping("/reservas")
 public class ReservaController {
 
-    @Autowired
-    private ReservaRepository reservaRepository;
+    private final ReservaService reservaService;
 
-    @Autowired
-    private EquipamentoRepository equipamentoRepository;
-
-    @GetMapping
-    public List<Reserva> getAllReservas() {
-        return reservaRepository.findAll();
+    public ReservaController(ReservaService reservaService) {
+        this.reservaService = reservaService;
     }
 
     @PostMapping
-    public ResponseEntity<?> criarReserva(@RequestBody Reserva reserva) {
-        Equipamento equipamento = equipamentoRepository.findById(reserva.getEquipamento().getIdEquipamento())
-                .orElseThrow(() -> new RuntimeException("Equipamento não encontrado"));
+    public ResponseEntity<Reserva> create(@RequestBody Reserva reserva) {
+        return ResponseEntity.ok(reservaService.save(reserva));
+    }
 
-        // Verifica se tem quantidade disponível
-        if (equipamento.getQuantidade() <= 0) {
-            return ResponseEntity.badRequest().body("Equipamento sem disponibilidade");
-        }
+    @GetMapping
+    public ResponseEntity<List<Reserva>> findAll() {
+        return ResponseEntity.ok(reservaService.findAll());
+    }
 
-        // Reduz quantidade
-        equipamento.setQuantidade(Long.valueOf(equipamento.getQuantidade() - 1));
-        equipamentoRepository.save(equipamento);
+    @GetMapping("/{id}")
+    public ResponseEntity<Reserva> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(reservaService.findById(id));
+    }
 
-        Reserva novaReserva = reservaRepository.save(reserva);
-        return ResponseEntity.ok(novaReserva);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Reserva>> findByUsuarioId(@PathVariable Integer userId) {
+        return ResponseEntity.ok(reservaService.findByUsuarioId(userId));
+    }
+
+    @GetMapping("/recurso/{recursoId}")
+    public ResponseEntity<List<Reserva>> findByRecursoId(@PathVariable Integer recursoId) {
+        return ResponseEntity.ok(reservaService.findByRecursoId(recursoId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Reserva> update(@PathVariable Integer id, @RequestBody Reserva reserva) {
+        return ResponseEntity.ok(reservaService.update(id, reserva));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        reservaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

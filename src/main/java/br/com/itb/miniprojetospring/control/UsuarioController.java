@@ -1,5 +1,6 @@
 package br.com.itb.miniprojetospring.control;
 
+import br.com.itb.miniprojetospring.model.AuthResponse;
 import br.com.itb.miniprojetospring.model.Usuario;
 import br.com.itb.miniprojetospring.service.UsuarioService;
 

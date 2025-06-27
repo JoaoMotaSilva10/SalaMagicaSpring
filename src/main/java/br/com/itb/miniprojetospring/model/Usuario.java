@@ -1,8 +1,8 @@
 package br.com.itb.miniprojetospring.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Table;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 

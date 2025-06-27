@@ -1,59 +1,56 @@
 package br.com.itb.miniprojetospring.service;
 
 import br.com.itb.miniprojetospring.model.*;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Table;
-import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 
 import jakarta.transaction.Transactional;
 
-@Entity
-@Table(name = "Reserva")
-public class Reserva {
+@Service
+public class ReservaService {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private final ReservaRepository reservaRepository;
 
-    private String informacao;
+    public ReservaService(ReservaRepository reservaRepository) {
+        this.reservaRepository = reservaRepository;
+    }
 
-    private java.time.LocalDateTime dataCadastro;
+    @Transactional
+    public Reserva save(Reserva reserva) {
+        return reservaRepository.save(reserva);
+    }
 
-    private java.time.LocalDateTime dataReservada;
+    public List<Reserva> findAll() {
+        return reservaRepository.findAll();
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    public List<Reserva> findByUsuarioId(Integer usuarioId) {
+        return reservaRepository.findByUsuarioId(usuarioId);
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "recurso_id", nullable = false)
-    private Recurso recurso;
+    public List<Reserva> findByRecursoId(Integer recursoId) {
+        return reservaRepository.findByRecursoId(recursoId);
+    }
 
-    private String statusReserva;
+    public Reserva findById(Integer id) {
+        return reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+    }
 
-    // Getters e Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    @Transactional
+    public Reserva update(Integer id, Reserva reserva) {
+        Reserva existing = reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+        existing.setInformacao(reserva.getInformacao());
+        existing.setDataCadastro(reserva.getDataCadastro());
+        existing.setDataReservada(reserva.getDataReservada());
+        existing.setUsuario(reserva.getUsuario());
+        existing.setRecurso(reserva.getRecurso());
+        existing.setStatusReserva(reserva.getStatusReserva());
+        return reservaRepository.save(existing);
+    }
 
-    public String getInformacao() { return informacao; }
-    public void setInformacao(String informacao) { this.informacao = informacao; }
-
-    public java.time.LocalDateTime getDataCadastro() { return dataCadastro; }
-    public void setDataCadastro(java.time.LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
-
-    public java.time.LocalDateTime getDataReservada() { return dataReservada; }
-    public void setDataReservada(java.time.LocalDateTime dataReservada) { this.dataReservada = dataReservada; }
-
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-
-    public Recurso getRecurso() { return recurso; }
-    public void setRecurso(Recurso recurso) { this.recurso = recurso; }
-
-    public String getStatusReserva() { return statusReserva; }
-    public void setStatusReserva(String statusReserva) { this.statusReserva = statusReserva; }
+    @Transactional
+    public void delete(Integer id) {
+        reservaRepository.deleteById(id);
+    }
 }

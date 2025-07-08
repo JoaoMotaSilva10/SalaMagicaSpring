@@ -41,7 +41,6 @@ public class ReservaService {
     public Reserva update(Integer id, Reserva reserva) {
         Reserva existing = reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
         existing.setInformacao(reserva.getInformacao());
-        existing.setDataCadastro(reserva.getDataCadastro());
         existing.setDataReservada(reserva.getDataReservada());
         existing.setUsuario(reserva.getUsuario());
         existing.setRecurso(reserva.getRecurso());

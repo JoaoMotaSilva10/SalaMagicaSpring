@@ -3,6 +3,7 @@ package br.com.itb.miniprojetospring.control;
 import br.com.itb.miniprojetospring.model.Mensagem;
 import br.com.itb.miniprojetospring.service.MensagemService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -19,7 +20,7 @@ public class MensagemController {
     }
 
     @PostMapping
-    public ResponseEntity<Mensagem> create(@RequestBody Mensagem mensagem) {
+    public ResponseEntity<Mensagem> create(@Valid @RequestBody Mensagem mensagem) {
         return ResponseEntity.ok(mensagemService.save(mensagem));
     }
 

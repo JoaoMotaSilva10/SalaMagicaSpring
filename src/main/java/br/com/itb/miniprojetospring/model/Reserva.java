@@ -1,6 +1,8 @@
 package br.com.itb.miniprojetospring.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -14,6 +16,8 @@ public class Reserva {
 
     private String informacao;
 
+    @CreationTimestamp
+    @Column(name = "dataCadastro", nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
     private LocalDateTime dataReservada;

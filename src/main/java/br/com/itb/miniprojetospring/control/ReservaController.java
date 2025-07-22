@@ -56,4 +56,21 @@ public class ReservaController {
         reservaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAllReservas() {
+        return ResponseEntity.ok(reservaService.countAll());
+    }
+
+    @GetMapping("/count/today")
+    public ResponseEntity<Long> countReservasHoje() {
+        return ResponseEntity.ok(reservaService.countReservasHoje());
+    }
+
+    @GetMapping("/count/pendentes")
+    public ResponseEntity<Long> countReservasPendentes() {
+        return ResponseEntity.ok(reservaService.countReservasPendentes());
+    }
+
+
 }

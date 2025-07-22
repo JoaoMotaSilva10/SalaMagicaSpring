@@ -3,6 +3,7 @@ package br.com.itb.miniprojetospring.service;
 import br.com.itb.miniprojetospring.model.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.transaction.Transactional;
@@ -51,5 +52,18 @@ public class ReservaService {
     @Transactional
     public void delete(Integer id) {
         reservaRepository.deleteById(id);
+    }
+
+    public Long countAll() {
+        return reservaRepository.count();
+    }
+
+    public Long countReservasHoje() {
+        LocalDate hoje = LocalDate.now();
+        return reservaRepository.countByDataReservada(hoje);
+    }
+
+    public Long countReservasPendentes() {
+        return reservaRepository.countByStatusReserva("PENDENTE");
     }
 }

@@ -31,9 +31,15 @@ public class Usuario {
 
     // Getters e Setters
 
-
     @PrePersist
     public void prePersist() {
-        this.dataCadastro = ZonedDateTime.now();
+        if (this.dataCadastro == null) {
+            this.dataCadastro = ZonedDateTime.now();
+        }
+        if (this.statusUsuario == null) {
+            this.statusUsuario = "ATIVO";
+        }
     }
+
+
 }

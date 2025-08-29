@@ -4,6 +4,7 @@ import br.com.itb.miniprojetospring.model.Usuario;
 import br.com.itb.miniprojetospring.model.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -16,6 +17,8 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario) {
+        String senhaBase64 = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
+        usuario.setSenha(senhaBase64);
         return usuarioRepository.save(usuario);
     }
 
@@ -32,18 +35,16 @@ public class UsuarioService {
                 .map(u -> {
                     u.setNome(usuario.getNome());
                     u.setEmail(usuario.getEmail());
-                    u.setSenha(usuario.getSenha());
+                    // Atualiza senha codificada
+                    u.setSenha(Base64.getEncoder().encodeToString(usuario.getSenha().getBytes()));
                     u.setNivelAcesso(usuario.getNivelAcesso());
-
                     if (usuario.getStatusUsuario() != null) {
                         u.setStatusUsuario(usuario.getStatusUsuario());
                     }
-
                     return usuarioRepository.save(u);
                 })
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
-
 
     public void delete(Long id) {
         usuarioRepository.deleteById(id);

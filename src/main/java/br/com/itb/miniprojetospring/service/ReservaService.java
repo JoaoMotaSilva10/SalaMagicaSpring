@@ -4,6 +4,8 @@ import br.com.itb.miniprojetospring.model.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.transaction.Transactional;
@@ -60,10 +62,34 @@ public class ReservaService {
 
     public Long countReservasHoje() {
         LocalDate hoje = LocalDate.now();
-        return reservaRepository.countByDataReservada(hoje);
+        LocalDateTime inicio = hoje.atStartOfDay();
+        LocalDateTime fim = hoje.atTime(LocalTime.MAX);
+
+        return reservaRepository.countByDataReservadaHoje(inicio, fim);
     }
 
+
     public Long countReservasPendentes() {
-        return reservaRepository.countByStatusReserva("PENDENTE");
+        // seus dados usam ATIVO como "a analisar"
+        return reservaRepository.countByStatusReserva("ATIVO");
     }
+
+    public Long countReservasMarcadas() {
+        // se quiser só futuras: return reservaRepository.countByStatusReservaAndDataReservadaAfter("ACEITA", LocalDateTime.now());
+        return reservaRepository.countByStatusReserva("ACEITA");
+    }
+
+    public Long countReservasRealizadas() {
+        return reservaRepository.countByStatusReserva("REALIZADA");
+    }
+
+    @Transactional
+    public Reserva confirmarRealizacao(Integer id) {
+        Reserva reserva = reservaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
+
+        reserva.setStatusReserva("REALIZADA");
+        return reservaRepository.save(reserva);
+    }
+
 }

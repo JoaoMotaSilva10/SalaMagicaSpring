@@ -1,10 +1,7 @@
 package br.com.itb.miniprojetospring.control;
 
 import br.com.itb.miniprojetospring.model.Reserva;
-import br.com.itb.miniprojetospring.model.ReservaRepository;
-
 import br.com.itb.miniprojetospring.service.ReservaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +17,8 @@ public class ReservaController {
     public ReservaController(ReservaService reservaService) {
         this.reservaService = reservaService;
     }
+
+    // ---------------- CRUD ----------------
 
     @PostMapping
     public ResponseEntity<Reserva> create(@RequestBody Reserva reserva) {
@@ -57,6 +56,13 @@ public class ReservaController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}/confirmar")
+    public ResponseEntity<Reserva> confirmarRealizacao(@PathVariable Integer id) {
+        return ResponseEntity.ok(reservaService.confirmarRealizacao(id));
+    }
+
+    // ---------------- Estatísticas ----------------
+
     @GetMapping("/count")
     public ResponseEntity<Long> countAllReservas() {
         return ResponseEntity.ok(reservaService.countAll());
@@ -72,5 +78,13 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.countReservasPendentes());
     }
 
+    @GetMapping("/count/marcadas")
+    public ResponseEntity<Long> countReservasMarcadas() {
+        return ResponseEntity.ok(reservaService.countReservasMarcadas());
+    }
 
+    @GetMapping("/count/realizadas")
+    public ResponseEntity<Long> countReservasRealizadas() {
+        return ResponseEntity.ok(reservaService.countReservasRealizadas());
+    }
 }

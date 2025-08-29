@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -43,18 +44,22 @@ public class UsuarioController {
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
         Usuario usuarioExistente = usuarioService.findByEmail(usuario.getEmail());
 
-        if (usuarioExistente != null && usuarioExistente.getSenha().equals(usuario.getSenha())) {
-            return ResponseEntity.ok(usuarioExistente);
-        } else {
-            return ResponseEntity.status(401).body("E-mail ou senha inválidos");
+        if (usuarioExistente != null) {
+            // Compara senha normal recebida codificada com a armazenada
+            String senhaBase64 = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
+            if (usuarioExistente.getSenha().equals(senhaBase64)) {
+                return ResponseEntity.ok(usuarioExistente);
+            }
         }
-    }
 
+        return ResponseEntity.status(401).body("E-mail ou senha inválidos");
+    }
 
     @GetMapping("/perfil")
     public Usuario buscarPerfil(@RequestParam String email) {
         return usuarioService.findByEmail(email);
     }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         return ResponseEntity.status(409).body("Email já cadastrado");

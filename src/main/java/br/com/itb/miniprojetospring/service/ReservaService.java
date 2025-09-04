@@ -61,13 +61,8 @@ public class ReservaService {
     }
 
     public Long countReservasHoje() {
-        LocalDate hoje = LocalDate.now();
-        LocalDateTime inicio = hoje.atStartOfDay();
-        LocalDateTime fim = hoje.atTime(LocalTime.MAX);
-
-        return reservaRepository.countByDataReservadaHoje(inicio, fim);
+        return reservaRepository.countByDataReservadaHoje(LocalDate.now());
     }
-
 
     public Long countReservasPendentes() {
         // seus dados usam ATIVO como "a analisar"

@@ -31,6 +31,11 @@ INSERT INTO Usuario (nome, email, senha, nivelAcesso, statusUsuario) VALUES
 ('Ordnael Zurc', 'ordnael@email.com.br', 'MTIzNDU2Nzg=', 'USER', 'TROCAR_SENHA');
 GO
 
+INSERT INTO Usuario (nome, email, senha, nivelAcesso, statusUsuario)
+VALUES ('João Mota', 'joaopedromotasilva200@gmail.com', 'MTIzNDU2Nzg=', 'ADMIN', 'ATIVO');
+
+
+
 -- Criação da tabela Recurso
 CREATE TABLE Recurso (
                          id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -76,6 +81,19 @@ INSERT INTO Reserva (informacao, dataReservada, usuario_id, recurso_id, statusRe
 ('Sala para aula de reforço', '2025-09-14T16:00:00-03:00', 1, 2, 'ATIVO');
 GO
 
+
+-- Criação da tabela TokenRecuperacao
+CREATE TABLE TokenRecuperacao (
+                                  id BIGINT IDENTITY(1,1) PRIMARY KEY,
+                                  token NVARCHAR(10) NOT NULL,
+                                  usuario_id BIGINT NOT NULL,
+                                  dataExpiracao DATETIME2 NOT NULL,
+                                  usado BIT NOT NULL DEFAULT 0,
+                                  CONSTRAINT fk_token_usuario FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+GO
+
+
 -- Criação da tabela Mensagem
 CREATE TABLE Mensagem (
                           id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -93,6 +111,7 @@ INSERT INTO Mensagem (emissor, email, telefone, texto, statusMensagem) VALUES
 ('Ordnael Zurc', 'ordnael@email.com', '(11) 98765-4123', 'Mensagem de teste', 'ATIVO'),
 ('Maria Onete', 'maria@email.com', NULL, 'Segunda mensagem de teste', 'ATIVO');
 GO
+
 
 -- Consultas para verificar dados
 SELECT * FROM Usuario;

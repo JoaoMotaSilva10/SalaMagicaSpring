@@ -60,6 +60,26 @@ public class UsuarioController {
         return usuarioService.findByEmail(email);
     }
 
+    @PostMapping("/esqueci-senha")
+    public ResponseEntity<String> esqueciSenha(@RequestParam String email) {
+        try {
+            usuarioService.solicitarRecuperacaoSenha(email);
+            return ResponseEntity.ok("Código de recuperação enviado para o email");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<String> redefinirSenha(@RequestParam String token, @RequestParam String novaSenha) {
+        try {
+            usuarioService.redefinirSenha(token, novaSenha);
+            return ResponseEntity.ok("Senha redefinida com sucesso");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         return ResponseEntity.status(409).body("Email já cadastrado");

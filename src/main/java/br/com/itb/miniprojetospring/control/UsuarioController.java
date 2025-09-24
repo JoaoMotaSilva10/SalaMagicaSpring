@@ -61,8 +61,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/esqueci-senha")
-    public ResponseEntity<String> esqueciSenha(@RequestParam String email) {
+    public ResponseEntity<String> esqueciSenha(@RequestBody java.util.Map<String, String> request) {
         try {
+            String email = request.get("email");
             usuarioService.solicitarRecuperacaoSenha(email);
             return ResponseEntity.ok("Código de recuperação enviado para o email");
         } catch (RuntimeException e) {
@@ -70,15 +71,32 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/redefinir-senha")
-    public ResponseEntity<String> redefinirSenha(@RequestParam String token, @RequestParam String novaSenha) {
+    @PostMapping("/verificar-codigo")
+    public ResponseEntity<String> verificarCodigo(@RequestBody java.util.Map<String, String> request) {
         try {
-            usuarioService.redefinirSenha(token, novaSenha);
+            String email = request.get("email");
+            String codigo = request.get("codigo");
+            usuarioService.verificarCodigo(email, codigo);
+            return ResponseEntity.ok("Código válido");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/redefinir-senha")
+    public ResponseEntity<String> redefinirSenha(@RequestBody java.util.Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String codigo = request.get("codigo");
+            String novaSenha = request.get("novaSenha");
+            usuarioService.redefinirSenhaComCodigo(email, codigo, novaSenha);
             return ResponseEntity.ok("Senha redefinida com sucesso");
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {

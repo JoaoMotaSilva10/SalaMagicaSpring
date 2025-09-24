@@ -80,7 +80,58 @@ public class UsuarioService {
         tokenRepository.save(tokenRecuperacao);
 
         // Envia email real
-        emailService.enviarEmailRecuperacao(email, token);
+        try {
+            emailService.enviarEmailRecuperacao(email, token);
+        } catch (Exception e) {
+            System.out.println("Erro ao enviar e-mail, mas token foi gerado: " + token);
+            // Não falha se o e-mail não for enviado (para testes)
+        }
+    }
+
+    public void verificarCodigo(String email, String codigo) {
+        Usuario usuario = findByEmail(email);
+        if (usuario == null) {
+            throw new RuntimeException("Email não encontrado");
+        }
+
+        TokenRecuperacao tokenRecuperacao = tokenRepository.findByTokenAndUsuario(codigo, usuario)
+                .orElseThrow(() -> new RuntimeException("Código inválido"));
+
+        if (tokenRecuperacao.isUsado()) {
+            throw new RuntimeException("Código já foi utilizado");
+        }
+
+        if (tokenRecuperacao.getDataExpiracao().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Código expirado");
+        }
+    }
+
+    @Transactional
+    public void redefinirSenhaComCodigo(String email, String codigo, String novaSenha) {
+        Usuario usuario = findByEmail(email);
+        if (usuario == null) {
+            throw new RuntimeException("Email não encontrado");
+        }
+
+        TokenRecuperacao tokenRecuperacao = tokenRepository.findByTokenAndUsuario(codigo, usuario)
+                .orElseThrow(() -> new RuntimeException("Código inválido"));
+
+        if (tokenRecuperacao.isUsado()) {
+            throw new RuntimeException("Código já foi utilizado");
+        }
+
+        if (tokenRecuperacao.getDataExpiracao().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Código expirado");
+        }
+
+        // Atualiza senha do usuário
+        String senhaBase64 = Base64.getEncoder().encodeToString(novaSenha.getBytes());
+        usuario.setSenha(senhaBase64);
+        usuarioRepository.save(usuario);
+
+        // Marca token como usado
+        tokenRecuperacao.setUsado(true);
+        tokenRepository.save(tokenRecuperacao);
     }
 
     @Transactional

@@ -15,8 +15,8 @@ public class EmailService {
 
     public void enviarEmailRecuperacao(String email, String token) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("email");
-        // Inserir o próprio email na linha acima
+        message.setFrom("salamagicafieb@gmail.com       ");
+        // Inserir email do sala magica na linha acima
         message.setTo(email);
         message.setSubject("Recuperação de Senha - Sala Mágica");
         message.setText("Olá!\n\n" +

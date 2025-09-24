@@ -94,6 +94,20 @@ CREATE TABLE TokenRecuperacao (
 GO
 
 
+-- Criação da tabela Perfil
+CREATE TABLE Perfil (
+                        id BIGINT IDENTITY(1,1) PRIMARY KEY,
+                        usuario_id BIGINT NOT NULL UNIQUE,
+                        rm NVARCHAR(50) NULL,
+                        unidade NVARCHAR(MAX) NULL,
+                        turma NVARCHAR(50) NULL,
+                        serie NVARCHAR(50) NULL,
+                        periodo NVARCHAR(50) NULL,
+                        cpf NVARCHAR(14) NULL,
+                        CONSTRAINT fk_perfil_usuario FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
+);
+GO
+
 -- Criação da tabela Mensagem
 CREATE TABLE Mensagem (
                           id BIGINT IDENTITY(1,1) PRIMARY KEY,
@@ -113,8 +127,15 @@ INSERT INTO Mensagem (emissor, email, telefone, texto, statusMensagem) VALUES
 GO
 
 
+-- Inserção de perfis para usuários existentes (opcional)
+INSERT INTO Perfil (usuario_id, rm, unidade, turma, serie, periodo, cpf) VALUES
+(1, '12345', 'Campus São Paulo', 'A1', '3º Ano', 'Manhã', '123.456.789-00'),
+(2, '67890', 'Campus São Paulo', 'B2', '2º Ano', 'Tarde', '987.654.321-00');
+GO
+
 -- Consultas para verificar dados
 SELECT * FROM Usuario;
+SELECT * FROM Perfil;
 SELECT * FROM Recurso;
 SELECT * FROM Reserva;
 SELECT * FROM Mensagem;

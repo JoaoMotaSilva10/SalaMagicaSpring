@@ -18,19 +18,28 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final TokenRecuperacaoRepository tokenRepository;
     private final EmailService emailService;
+    private final PerfilService perfilService;
 
     public UsuarioService(UsuarioRepository usuarioRepository, 
                          TokenRecuperacaoRepository tokenRepository,
-                         EmailService emailService) {
+                         EmailService emailService,
+                         PerfilService perfilService) {
         this.usuarioRepository = usuarioRepository;
         this.tokenRepository = tokenRepository;
         this.emailService = emailService;
+        this.perfilService = perfilService;
     }
 
+    @Transactional
     public Usuario save(Usuario usuario) {
         String senhaBase64 = Base64.getEncoder().encodeToString(usuario.getSenha().getBytes());
         usuario.setSenha(senhaBase64);
-        return usuarioRepository.save(usuario);
+        Usuario usuarioSalvo = usuarioRepository.save(usuario);
+        
+        // Cria perfil automaticamente
+        perfilService.criarPerfil(usuarioSalvo);
+        
+        return usuarioSalvo;
     }
 
     public List<Usuario> listarTodos() {

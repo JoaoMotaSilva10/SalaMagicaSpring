@@ -14,6 +14,7 @@ public class Aluno extends Pessoa {
     private String serie;
     private String periodo;
     private String cpf;
+    private String unidade;
 
     @Override
     public String getTipoUsuario() {

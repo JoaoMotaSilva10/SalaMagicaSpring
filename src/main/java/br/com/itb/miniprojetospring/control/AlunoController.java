@@ -28,7 +28,18 @@ public class AlunoController {
         return alunoService.findAll();
     }
 
-
+    @GetMapping("/perfil")
+    public ResponseEntity<Aluno> buscarPerfil(@RequestParam String email) {
+        try {
+            Aluno aluno = alunoService.findByEmail(email);
+            if (aluno != null) {
+                return ResponseEntity.ok(aluno);
+            }
+            return ResponseEntity.status(404).body(null);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody Aluno aluno) {
@@ -83,19 +94,6 @@ public class AlunoController {
             return ResponseEntity.ok("Senha redefinida com sucesso");
         } catch (RuntimeException e) {
             return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/perfil")
-    public ResponseEntity<Aluno> buscarPerfil(@RequestParam String email) {
-        try {
-            Aluno aluno = alunoService.findByEmail(email);
-            if (aluno != null) {
-                return ResponseEntity.ok(aluno);
-            }
-            return ResponseEntity.status(404).body(null);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
         }
     }
 }

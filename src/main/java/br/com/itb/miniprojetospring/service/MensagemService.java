@@ -37,7 +37,8 @@ public class MensagemService {
         existing.setDataMensagem(mensagem.getDataMensagem());
         existing.setEmissor(mensagem.getEmissor());
         existing.setEmail(mensagem.getEmail());
-        existing.setTelefone(mensagem.getTelefone());
+        existing.setRm(mensagem.getRm());
+        existing.setAssunto(mensagem.getAssunto());
         existing.setTexto(mensagem.getTexto());
         existing.setStatusMensagem(mensagem.getStatusMensagem());
         return mensagemRepository.save(existing);

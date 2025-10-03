@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
-    List<Reserva> findByUsuarioId(Integer usuarioId);
+    List<Reserva> findByPessoaId(Long pessoaId);
     List<Reserva> findByRecursoId(Integer recursoId);
 
     long count();

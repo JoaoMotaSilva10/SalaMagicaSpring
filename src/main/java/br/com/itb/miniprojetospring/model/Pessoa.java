@@ -9,7 +9,8 @@ import java.time.ZonedDateTime;
 @Setter
 @Getter
 @Entity
-public class Usuario {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Pessoa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,14 +23,9 @@ public class Usuario {
 
     private String senha;
 
-    private String nivelAcesso; // ADMIN ou USER
-
     private ZonedDateTime dataCadastro;
 
-
     private String statusUsuario; // ATIVO, INATIVO, TROCAR_SENHA
-
-    // Getters e Setters
 
     @PrePersist
     public void prePersist() {
@@ -41,5 +37,5 @@ public class Usuario {
         }
     }
 
-
+    public abstract String getTipoUsuario();
 }

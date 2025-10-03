@@ -47,17 +47,34 @@ public class AlunoService {
     public Aluno update(Long id, Aluno aluno) {
         return alunoRepository.findById(id)
                 .map(a -> {
-                    a.setNome(aluno.getNome());
-                    a.setEmail(aluno.getEmail());
+                    if (aluno.getNome() != null && !aluno.getNome().isEmpty()) {
+                        a.setNome(aluno.getNome());
+                    }
+                    if (aluno.getEmail() != null && !aluno.getEmail().isEmpty()) {
+                        a.setEmail(aluno.getEmail());
+                    }
                     if (aluno.getSenha() != null && !aluno.getSenha().isEmpty()) {
                         String senhaBase64 = Base64.getEncoder().encodeToString(aluno.getSenha().getBytes());
                         a.setSenha(senhaBase64);
                     }
-                    a.setRm(aluno.getRm());
-                    a.setTurma(aluno.getTurma());
-                    a.setSerie(aluno.getSerie());
-                    a.setPeriodo(aluno.getPeriodo());
-                    a.setCpf(aluno.getCpf());
+                    if (aluno.getRm() != null) {
+                        a.setRm(aluno.getRm());
+                    }
+                    if (aluno.getTurma() != null) {
+                        a.setTurma(aluno.getTurma());
+                    }
+                    if (aluno.getSerie() != null) {
+                        a.setSerie(aluno.getSerie());
+                    }
+                    if (aluno.getPeriodo() != null) {
+                        a.setPeriodo(aluno.getPeriodo());
+                    }
+                    if (aluno.getCpf() != null) {
+                        a.setCpf(aluno.getCpf());
+                    }
+                    if (aluno.getUnidade() != null) {
+                        a.setUnidade(aluno.getUnidade());
+                    }
                     if (aluno.getStatusUsuario() != null) {
                         a.setStatusUsuario(aluno.getStatusUsuario());
                     }

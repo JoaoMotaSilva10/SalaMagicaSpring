@@ -1,5 +1,6 @@
 package br.com.itb.miniprojetospring.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,11 +23,11 @@ public class Reserva {
 
     private LocalDateTime dataReservada;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa pessoa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recurso_id")
     private Recurso recurso;
 
@@ -67,12 +68,12 @@ public class Reserva {
         this.dataReservada = dataReservada;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public Recurso getRecurso() {
@@ -90,5 +91,7 @@ public class Reserva {
     public void setStatusReserva(String statusReserva) {
         this.statusReserva = statusReserva;
     }
+
+
 }
 

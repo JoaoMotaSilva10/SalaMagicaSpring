@@ -26,7 +26,9 @@ public class Mensagem {
     @NotBlank(message = "O email é obrigatório")
     private String email;
 
-    private String telefone;
+    private String rm;
+
+    private String assunto;
 
     @NotBlank(message = "O texto é obrigatório")
     private String texto;
@@ -68,12 +70,20 @@ public class Mensagem {
         this.email = email;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getRm() {
+        return rm;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setRm(String rm) {
+        this.rm = rm;
+    }
+
+    public String getAssunto() {
+        return assunto;
+    }
+
+    public void setAssunto(String assunto) {
+        this.assunto = assunto;
     }
 
     public String getTexto() {

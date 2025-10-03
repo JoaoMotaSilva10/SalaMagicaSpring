@@ -35,9 +35,9 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.findById(id));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Reserva>> findByUsuarioId(@PathVariable Integer userId) {
-        return ResponseEntity.ok(reservaService.findByUsuarioId(userId));
+    @GetMapping("/pessoa/{pessoaId}")
+    public ResponseEntity<List<Reserva>> findByPessoaId(@PathVariable Long pessoaId) {
+        return ResponseEntity.ok(reservaService.findByPessoaId(pessoaId));
     }
 
     @GetMapping("/recurso/{recursoId}")
@@ -86,5 +86,11 @@ public class ReservaController {
     @GetMapping("/count/realizadas")
     public ResponseEntity<Long> countReservasRealizadas() {
         return ResponseEntity.ok(reservaService.countReservasRealizadas());
+    }
+
+    @GetMapping("/debug")
+    public ResponseEntity<?> debugReservas() {
+        List<Reserva> reservas = reservaService.findAll();
+        return ResponseEntity.ok(reservas);
     }
 }

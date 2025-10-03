@@ -28,8 +28,8 @@ public class ReservaService {
         return reservaRepository.findAll();
     }
 
-    public List<Reserva> findByUsuarioId(Integer usuarioId) {
-        return reservaRepository.findByUsuarioId(usuarioId);
+    public List<Reserva> findByPessoaId(Long pessoaId) {
+        return reservaRepository.findByPessoaId(pessoaId);
     }
 
     public List<Reserva> findByRecursoId(Integer recursoId) {
@@ -45,7 +45,7 @@ public class ReservaService {
         Reserva existing = reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
         existing.setInformacao(reserva.getInformacao());
         existing.setDataReservada(reserva.getDataReservada());
-        existing.setUsuario(reserva.getUsuario());
+        existing.setPessoa(reserva.getPessoa());
         existing.setRecurso(reserva.getRecurso());
         existing.setStatusReserva(reserva.getStatusReserva());
         return reservaRepository.save(existing);

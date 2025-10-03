@@ -18,8 +18,8 @@ public class TokenRecuperacao {
     private String token;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa usuario;
 
     private LocalDateTime dataExpiracao;
 

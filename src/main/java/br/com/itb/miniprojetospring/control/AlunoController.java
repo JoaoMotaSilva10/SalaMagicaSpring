@@ -40,6 +40,11 @@ public class AlunoController {
             return ResponseEntity.status(404).body(null);
         }
     }
+    
+    @GetMapping("/debug")
+    public ResponseEntity<List<Aluno>> debugAlunos() {
+        return ResponseEntity.ok(alunoService.findAll());
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody Aluno aluno) {

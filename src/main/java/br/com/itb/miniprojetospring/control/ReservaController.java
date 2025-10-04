@@ -1,5 +1,6 @@
 package br.com.itb.miniprojetospring.control;
 
+import br.com.itb.miniprojetospring.dto.ReservaResponseDTO;
 import br.com.itb.miniprojetospring.model.Reserva;
 import br.com.itb.miniprojetospring.service.ReservaService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,15 @@ public class ReservaController {
     // ---------------- CRUD ----------------
 
     @PostMapping
-    public ResponseEntity<Reserva> create(@RequestBody Reserva reserva) {
-        return ResponseEntity.ok(reservaService.save(reserva));
+    public ResponseEntity<ReservaResponseDTO> create(@RequestBody Reserva reserva) {
+        System.out.println("=== DEBUG CONTROLLER ===");
+        System.out.println("JSON recebido - pessoaId: " + reserva.getPessoaId());
+        System.out.println("JSON recebido - informacao: " + reserva.getInformacao());
+        System.out.println("JSON recebido - recurso: " + (reserva.getRecurso() != null ? reserva.getRecurso().getId() : "null"));
+        System.out.println("=========================");
+        
+        Reserva savedReserva = reservaService.save(reserva);
+        return ResponseEntity.ok(reservaService.convertToDTO(savedReserva));
     }
 
     @GetMapping
@@ -36,8 +44,8 @@ public class ReservaController {
     }
 
     @GetMapping("/pessoa/{pessoaId}")
-    public ResponseEntity<List<Reserva>> findByPessoaId(@PathVariable Long pessoaId) {
-        return ResponseEntity.ok(reservaService.findByPessoaId(pessoaId));
+    public ResponseEntity<List<ReservaResponseDTO>> findByPessoaId(@PathVariable Long pessoaId) {
+        return ResponseEntity.ok(reservaService.findByPessoaIdDTO(pessoaId));
     }
 
     @GetMapping("/recurso/{recursoId}")

@@ -1,5 +1,6 @@
 package br.com.itb.miniprojetospring.service;
 
+import br.com.itb.miniprojetospring.dto.ReservaResponseDTO;
 import br.com.itb.miniprojetospring.model.*;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,43 @@ import jakarta.transaction.Transactional;
 public class ReservaService {
 
     private final ReservaRepository reservaRepository;
+    private final PessoaRepository pessoaRepository;
 
-    public ReservaService(ReservaRepository reservaRepository) {
+    public ReservaService(ReservaRepository reservaRepository, PessoaRepository pessoaRepository) {
         this.reservaRepository = reservaRepository;
+        this.pessoaRepository = pessoaRepository;
     }
 
     @Transactional
     public Reserva save(Reserva reserva) {
-        return reservaRepository.save(reserva);
+        System.out.println("=== DEBUG RESERVA SAVE ===");
+        System.out.println("pessoaId recebido: " + reserva.getPessoaId());
+        System.out.println("pessoa atual: " + reserva.getPessoa());
+        
+        // Se pessoaId foi enviado no JSON, busca a pessoa
+        if (reserva.getPessoaId() != null && reserva.getPessoa() == null) {
+            System.out.println("Buscando pessoa com ID: " + reserva.getPessoaId());
+            Pessoa pessoa = buscarPessoaPorId(reserva.getPessoaId());
+            System.out.println("Pessoa encontrada: " + pessoa.getNome() + " (ID: " + pessoa.getId() + ")");
+            reserva.setPessoa(pessoa);
+        }
+        
+        // Se pessoa não foi definida, lança erro
+        if (reserva.getPessoa() == null) {
+            throw new RuntimeException("pessoaId é obrigatório para criar uma reserva");
+        }
+        
+        System.out.println("Salvando reserva com pessoa: " + reserva.getPessoa().getNome());
+        Reserva saved = reservaRepository.save(reserva);
+        System.out.println("Reserva salva com ID: " + saved.getId());
+        System.out.println("===========================");
+        
+        return saved;
+    }
+    
+    private Pessoa buscarPessoaPorId(Long id) {
+        return pessoaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com ID: " + id));
     }
 
     public List<Reserva> findAll() {
@@ -30,6 +60,31 @@ public class ReservaService {
 
     public List<Reserva> findByPessoaId(Long pessoaId) {
         return reservaRepository.findByPessoaId(pessoaId);
+    }
+    
+    public List<ReservaResponseDTO> findByPessoaIdDTO(Long pessoaId) {
+        return reservaRepository.findByPessoaId(pessoaId).stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+    
+    public ReservaResponseDTO convertToDTO(Reserva reserva) {
+        ReservaResponseDTO dto = new ReservaResponseDTO();
+        dto.setId(reserva.getId());
+        dto.setInformacao(reserva.getInformacao());
+        dto.setDataCadastro(reserva.getDataCadastro());
+        dto.setDataReservada(reserva.getDataReservada());
+        dto.setStatusReserva(reserva.getStatusReserva());
+        dto.setRecurso(reserva.getRecurso());
+        
+        if (reserva.getPessoa() != null) {
+            dto.setPessoaId(reserva.getPessoa().getId());
+            dto.setPessoaNome(reserva.getPessoa().getNome());
+            dto.setPessoaEmail(reserva.getPessoa().getEmail());
+            dto.setPessoaTipo(reserva.getPessoa().getTipoUsuario());
+        }
+        
+        return dto;
     }
 
     public List<Reserva> findByRecursoId(Integer recursoId) {

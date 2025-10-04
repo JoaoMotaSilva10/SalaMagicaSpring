@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
-    List<Reserva> findByPessoaId(Long pessoaId);
+    @Query("SELECT r FROM Reserva r WHERE r.pessoa.id = :pessoaId")
+    List<Reserva> findByPessoaId(@Param("pessoaId") Long pessoaId);
     List<Reserva> findByRecursoId(Integer recursoId);
 
     long count();

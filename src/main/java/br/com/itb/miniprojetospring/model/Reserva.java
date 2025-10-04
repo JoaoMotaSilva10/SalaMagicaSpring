@@ -1,6 +1,8 @@
 package br.com.itb.miniprojetospring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -26,6 +28,10 @@ public class Reserva {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoa_id")
     private Pessoa pessoa;
+    
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Long pessoaId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recurso_id")
@@ -90,6 +96,14 @@ public class Reserva {
 
     public void setStatusReserva(String statusReserva) {
         this.statusReserva = statusReserva;
+    }
+    
+    public Long getPessoaId() {
+        return pessoaId;
+    }
+    
+    public void setPessoaId(Long pessoaId) {
+        this.pessoaId = pessoaId;
     }
 
 

@@ -23,19 +23,22 @@ public class ReservaController {
 
     @PostMapping
     public ResponseEntity<ReservaResponseDTO> create(@RequestBody Reserva reserva) {
-        System.out.println("=== DEBUG CONTROLLER ===");
-        System.out.println("JSON recebido - pessoaId: " + reserva.getPessoaId());
-        System.out.println("JSON recebido - informacao: " + reserva.getInformacao());
-        System.out.println("JSON recebido - recurso: " + (reserva.getRecurso() != null ? reserva.getRecurso().getId() : "null"));
-        System.out.println("=========================");
-        
         Reserva savedReserva = reservaService.save(reserva);
         return ResponseEntity.ok(reservaService.convertToDTO(savedReserva));
     }
 
     @GetMapping
-    public ResponseEntity<List<Reserva>> findAll() {
-        return ResponseEntity.ok(reservaService.findAll());
+    public ResponseEntity<List<ReservaResponseDTO>> findAll() {
+        try {
+            List<Reserva> reservas = reservaService.findAll();
+            List<ReservaResponseDTO> dtos = reservas.stream()
+                    .map(reservaService::convertToDTO)
+                    .toList();
+            return ResponseEntity.ok(dtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/{id}")
@@ -45,7 +48,12 @@ public class ReservaController {
 
     @GetMapping("/pessoa/{pessoaId}")
     public ResponseEntity<List<ReservaResponseDTO>> findByPessoaId(@PathVariable Long pessoaId) {
-        return ResponseEntity.ok(reservaService.findByPessoaIdDTO(pessoaId));
+        try {
+            return ResponseEntity.ok(reservaService.findByPessoaIdDTO(pessoaId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
     @GetMapping("/recurso/{recursoId}")
@@ -54,8 +62,9 @@ public class ReservaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reserva> update(@PathVariable Integer id, @RequestBody Reserva reserva) {
-        return ResponseEntity.ok(reservaService.update(id, reserva));
+    public ResponseEntity<ReservaResponseDTO> update(@PathVariable Integer id, @RequestBody Reserva reserva) {
+        Reserva updatedReserva = reservaService.update(id, reserva);
+        return ResponseEntity.ok(reservaService.convertToDTO(updatedReserva));
     }
 
     @DeleteMapping("/{id}")
@@ -73,7 +82,12 @@ public class ReservaController {
 
     @GetMapping("/count")
     public ResponseEntity<Long> countAllReservas() {
-        return ResponseEntity.ok(reservaService.countAll());
+        try {
+            return ResponseEntity.ok(reservaService.countAll());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(0L);
+        }
     }
 
     @GetMapping("/count/today")

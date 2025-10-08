@@ -20,13 +20,32 @@ public class GerenciadorController {
     }
 
     @PostMapping
-    public Gerenciador create(@RequestBody Gerenciador gerenciador) {
-        return gerenciadorService.save(gerenciador);
+    public ResponseEntity<Gerenciador> create(@RequestBody Gerenciador gerenciador) {
+        try {
+            Gerenciador saved = gerenciadorService.save(gerenciador);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
 
     @GetMapping
-    public List<Gerenciador> listarTodos() {
-        return gerenciadorService.findAll();
+    public ResponseEntity<List<Gerenciador>> listarTodos() {
+        try {
+            return ResponseEntity.ok(gerenciadorService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Gerenciador> findById(@PathVariable Long id) {
+        try {
+            Gerenciador gerenciador = gerenciadorService.findById(id);
+            return ResponseEntity.ok(gerenciador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @PostMapping("/login")

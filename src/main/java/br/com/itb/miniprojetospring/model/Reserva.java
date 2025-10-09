@@ -27,6 +27,7 @@ public class Reserva {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoa_id")
+    @JsonIgnore
     private Pessoa pessoa;
     
     @Transient

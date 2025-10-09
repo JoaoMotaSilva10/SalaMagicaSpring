@@ -24,15 +24,9 @@ public class ReservaService {
 
     @Transactional
     public Reserva save(Reserva reserva) {
-        System.out.println("=== DEBUG RESERVA SAVE ===");
-        System.out.println("pessoaId recebido: " + reserva.getPessoaId());
-        System.out.println("pessoa atual: " + reserva.getPessoa());
-        
         // Se pessoaId foi enviado no JSON, busca a pessoa
         if (reserva.getPessoaId() != null && reserva.getPessoa() == null) {
-            System.out.println("Buscando pessoa com ID: " + reserva.getPessoaId());
             Pessoa pessoa = buscarPessoaPorId(reserva.getPessoaId());
-            System.out.println("Pessoa encontrada: " + pessoa.getNome() + " (ID: " + pessoa.getId() + ")");
             reserva.setPessoa(pessoa);
         }
         
@@ -41,12 +35,7 @@ public class ReservaService {
             throw new RuntimeException("pessoaId é obrigatório para criar uma reserva");
         }
         
-        System.out.println("Salvando reserva com pessoa: " + reserva.getPessoa().getNome());
-        Reserva saved = reservaRepository.save(reserva);
-        System.out.println("Reserva salva com ID: " + saved.getId());
-        System.out.println("===========================");
-        
-        return saved;
+        return reservaRepository.save(reserva);
     }
     
     private Pessoa buscarPessoaPorId(Long id) {
@@ -77,11 +66,26 @@ public class ReservaService {
         dto.setStatusReserva(reserva.getStatusReserva());
         dto.setRecurso(reserva.getRecurso());
         
+        // Se a pessoa já está carregada, usa ela
         if (reserva.getPessoa() != null) {
             dto.setPessoaId(reserva.getPessoa().getId());
             dto.setPessoaNome(reserva.getPessoa().getNome());
             dto.setPessoaEmail(reserva.getPessoa().getEmail());
             dto.setPessoaTipo(reserva.getPessoa().getTipoUsuario());
+        } else {
+            // Se não está carregada, tenta buscar (com tratamento de erro)
+            try {
+                Reserva fullReserva = reservaRepository.findById(reserva.getId()).orElse(null);
+                if (fullReserva != null && fullReserva.getPessoa() != null) {
+                    dto.setPessoaId(fullReserva.getPessoa().getId());
+                    dto.setPessoaNome(fullReserva.getPessoa().getNome());
+                    dto.setPessoaEmail(fullReserva.getPessoa().getEmail());
+                    dto.setPessoaTipo(fullReserva.getPessoa().getTipoUsuario());
+                }
+            } catch (Exception e) {
+                // Se der erro, deixa os campos da pessoa como null
+                System.err.println("Erro ao buscar pessoa da reserva: " + e.getMessage());
+            }
         }
         
         return dto;
@@ -100,9 +104,15 @@ public class ReservaService {
         Reserva existing = reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva não encontrada"));
         existing.setInformacao(reserva.getInformacao());
         existing.setDataReservada(reserva.getDataReservada());
-        existing.setPessoa(reserva.getPessoa());
         existing.setRecurso(reserva.getRecurso());
         existing.setStatusReserva(reserva.getStatusReserva());
+        
+        // Se pessoaId foi enviado, atualiza a pessoa
+        if (reserva.getPessoaId() != null) {
+            Pessoa pessoa = buscarPessoaPorId(reserva.getPessoaId());
+            existing.setPessoa(pessoa);
+        }
+        
         return reservaRepository.save(existing);
     }
 

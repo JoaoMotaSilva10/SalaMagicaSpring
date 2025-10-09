@@ -53,4 +53,12 @@ public class AuthController {
         
         return ResponseEntity.status(401).body(Map.of("valid", false));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // Para JWT stateless, o logout é feito no cliente removendo o token
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logout realizado com sucesso");
+        return ResponseEntity.ok(response);
+    }
 }

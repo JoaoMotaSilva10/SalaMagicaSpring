@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -26,6 +27,9 @@ public abstract class Pessoa {
     private ZonedDateTime dataCadastro;
 
     private String statusUsuario; // ATIVO, INATIVO, TROCAR_SENHA
+
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reserva> reservas;
 
     @PrePersist
     public void prePersist() {

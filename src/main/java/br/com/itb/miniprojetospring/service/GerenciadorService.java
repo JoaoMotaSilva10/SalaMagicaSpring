@@ -38,6 +38,11 @@ public class GerenciadorService {
         return gerenciadorRepository.findByEmail(email).orElse(null);
     }
 
+    public Gerenciador findById(Long id) {
+        return gerenciadorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gerenciador não encontrado"));
+    }
+
     @Transactional
     public Gerenciador update(Long id, Gerenciador gerenciador) {
         return gerenciadorRepository.findById(id)
@@ -64,7 +69,14 @@ public class GerenciadorService {
         if (!gerenciadorRepository.existsById(id)) {
             throw new RuntimeException("Gerenciador não encontrado");
         }
-        gerenciadorRepository.deleteById(id);
+        try {
+            gerenciadorRepository.deleteById(id);
+        } catch (Exception e) {
+            if (e.getMessage().contains("constraint") || e.getMessage().contains("foreign key")) {
+                throw new RuntimeException("Não é possível excluir este gerenciador pois ele possui reservas associadas");
+            }
+            throw new RuntimeException("Erro ao excluir gerenciador: " + e.getMessage());
+        }
     }
 
     @Transactional

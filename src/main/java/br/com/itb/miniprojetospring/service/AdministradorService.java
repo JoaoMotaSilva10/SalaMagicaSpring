@@ -38,6 +38,34 @@ public class AdministradorService {
         return administradorRepository.findByEmail(email).orElse(null);
     }
 
+    public Administrador findById(Long id) {
+        return administradorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Administrador não encontrado"));
+    }
+
+    @Transactional
+    public Administrador update(Long id, Administrador administrador) {
+        Administrador existing = findById(id);
+        existing.setNome(administrador.getNome());
+        existing.setEmail(administrador.getEmail());
+        if (administrador.getSenha() != null && !administrador.getSenha().isEmpty()) {
+            String senhaBase64 = Base64.getEncoder().encodeToString(administrador.getSenha().getBytes());
+            existing.setSenha(senhaBase64);
+        }
+        existing.setNivelPermissao(administrador.getNivelPermissao());
+        existing.setSetor(administrador.getSetor());
+        existing.setStatusUsuario(administrador.getStatusUsuario());
+        return administradorRepository.save(existing);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!administradorRepository.existsById(id)) {
+            throw new RuntimeException("Administrador não encontrado");
+        }
+        administradorRepository.deleteById(id);
+    }
+
     @Transactional
     public void solicitarRecuperacaoSenha(String email) {
         Administrador administrador = findByEmail(email);

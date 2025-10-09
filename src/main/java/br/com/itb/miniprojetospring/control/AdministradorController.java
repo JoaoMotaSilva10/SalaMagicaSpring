@@ -20,13 +20,52 @@ public class AdministradorController {
     }
 
     @PostMapping
-    public Administrador create(@RequestBody Administrador administrador) {
-        return administradorService.save(administrador);
+    public ResponseEntity<Administrador> create(@RequestBody Administrador administrador) {
+        try {
+            Administrador saved = administradorService.save(administrador);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(null);
+        }
     }
 
     @GetMapping
-    public List<Administrador> listarTodos() {
-        return administradorService.findAll();
+    public ResponseEntity<List<Administrador>> listarTodos() {
+        try {
+            return ResponseEntity.ok(administradorService.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Administrador> findById(@PathVariable Long id) {
+        try {
+            Administrador administrador = administradorService.findById(id);
+            return ResponseEntity.ok(administrador);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Administrador> update(@PathVariable Long id, @RequestBody Administrador administrador) {
+        try {
+            Administrador updated = administradorService.update(id, administrador);
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        try {
+            administradorService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 
     @PostMapping("/login")

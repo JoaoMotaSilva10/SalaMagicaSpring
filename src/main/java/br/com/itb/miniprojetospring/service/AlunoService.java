@@ -24,10 +24,13 @@ public class AlunoService {
         this.emailService = emailService;
     }
 
+    private String codificarSenha(String senha) {
+        return Base64.getEncoder().encodeToString(senha.getBytes());
+    }
+
     @Transactional
     public Aluno save(Aluno aluno) {
-        String senhaBase64 = Base64.getEncoder().encodeToString(aluno.getSenha().getBytes());
-        aluno.setSenha(senhaBase64);
+        aluno.setSenha(codificarSenha(aluno.getSenha()));
         return alunoRepository.save(aluno);
     }
 
@@ -54,8 +57,7 @@ public class AlunoService {
                         a.setEmail(aluno.getEmail());
                     }
                     if (aluno.getSenha() != null && !aluno.getSenha().isEmpty()) {
-                        String senhaBase64 = Base64.getEncoder().encodeToString(aluno.getSenha().getBytes());
-                        a.setSenha(senhaBase64);
+                        a.setSenha(codificarSenha(aluno.getSenha()));
                     }
                     if (aluno.getRm() != null) {
                         a.setRm(aluno.getRm());
@@ -72,9 +74,6 @@ public class AlunoService {
                     if (aluno.getCpf() != null) {
                         a.setCpf(aluno.getCpf());
                     }
-                    if (aluno.getUnidade() != null) {
-                        a.setUnidade(aluno.getUnidade());
-                    }
                     if (aluno.getStatusUsuario() != null) {
                         a.setStatusUsuario(aluno.getStatusUsuario());
                     }
@@ -88,7 +87,14 @@ public class AlunoService {
         if (!alunoRepository.existsById(id)) {
             throw new RuntimeException("Aluno não encontrado");
         }
-        alunoRepository.deleteById(id);
+        try {
+            alunoRepository.deleteById(id);
+        } catch (Exception e) {
+            if (e.getMessage().contains("constraint") || e.getMessage().contains("foreign key")) {
+                throw new RuntimeException("Não é possível excluir este aluno pois ele possui reservas associadas");
+            }
+            throw new RuntimeException("Erro ao excluir aluno: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -137,8 +143,7 @@ public class AlunoService {
         Aluno aluno = findByEmail(email);
         TokenRecuperacao token = tokenRepository.findByTokenAndUsuario(codigo, aluno).get();
         
-        String senhaBase64 = Base64.getEncoder().encodeToString(novaSenha.getBytes());
-        aluno.setSenha(senhaBase64);
+        aluno.setSenha(codificarSenha(novaSenha));
         alunoRepository.save(aluno);
         
         token.setUsado(true);

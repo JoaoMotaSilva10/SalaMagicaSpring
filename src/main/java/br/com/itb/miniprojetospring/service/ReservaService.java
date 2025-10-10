@@ -5,8 +5,6 @@ import br.com.itb.miniprojetospring.model.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.transaction.Transactional;
@@ -130,8 +128,7 @@ public class ReservaService {
     }
 
     public Long countReservasPendentes() {
-        // seus dados usam ATIVO como "a analisar"
-        return reservaRepository.countByStatusReserva("ATIVO");
+        return reservaRepository.countByStatusReserva("EM_ANALISE");
     }
 
     public Long countReservasMarcadas() {

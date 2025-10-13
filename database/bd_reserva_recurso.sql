@@ -115,18 +115,18 @@ VALUES (3, '12345', '3A', '3º Ano', 'Manhã', '123.456.789-00');
 
 -- Recursos (Ambientes e Equipamentos)
 INSERT INTO Recurso (nome, descricao, tipo, statusRecurso) VALUES
-('Auditório', 'Auditório principal do campus', 'AMBIENTE', 'ATIVO'),
-('Sala de Aula 101', 'Sala padrão para turmas regulares', 'AMBIENTE', 'ATIVO'),
-('Laboratório de Informática', 'Espaço com computadores para aulas práticas', 'AMBIENTE', 'ATIVO'),
-('Laboratório de Eletroeletrônica', 'Laboratório para montagem de circuitos', 'AMBIENTE', 'ATIVO'),
-('Laboratório de Telecomunicações', 'Laboratório com equipamentos de redes e telecom', 'AMBIENTE', 'ATIVO'),
+('Auditório', 'Auditório principal do campus', 'SALA', 'ATIVO'),
+('Sala de Aula 101', 'Sala padrão para turmas regulares', 'SALA', 'ATIVO'),
+('Laboratório de Informática', 'Espaço com computadores para aulas práticas', 'LABORATORIO', 'ATIVO'),
+('Laboratório de Eletroeletrônica', 'Laboratório para montagem de circuitos', 'LABORATORIO', 'ATIVO'),
+('Laboratório de Telecomunicações', 'Laboratório com equipamentos de redes e telecom', 'LABORATORIO', 'ATIVO'),
 ('Computador Desktop', 'Computador desktop padrão', 'EQUIPAMENTO', 'ATIVO'),
 ('Chromebook', 'Notebook leve com ChromeOS', 'EQUIPAMENTO', 'ATIVO'),
 ('Datashow', 'Projetor multimídia portátil', 'EQUIPAMENTO', 'ATIVO');
 
 -- Reserva exemplo
 INSERT INTO Reserva (informacao, dataReservada, pessoa_id, recurso_id, statusReserva) 
-VALUES ('Aula prática de programação', '2024-01-15 14:00:00', 3, 3, 'ATIVA');
+VALUES ('Aula prática de programação', '2024-01-15 14:00:00', 3, 3, 'EM_ANALISE');
 
 -- Criar índices para performance
 CREATE INDEX IX_Reserva_DataReservada ON Reserva(dataReservada);
@@ -136,3 +136,12 @@ CREATE INDEX IX_TokenRecuperacao_Pessoa ON TokenRecuperacao(pessoa_id);
 CREATE INDEX IX_Pessoa_Email ON Pessoa(email);
 
 GO
+
+SELECT * FROM Aluno;
+SELECT * FROM Pessoa;
+SELECT * FROM Gerenciador;
+SELECT * FROM Administrador;
+SELECT * FROM TokenRecuperacao;
+SELECT * FROM Recurso;
+SELECT * FROM Reserva;
+SELECT * FROM Mensagem
